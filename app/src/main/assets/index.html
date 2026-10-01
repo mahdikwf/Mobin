@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حسابداری مغازه</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2a2a;--mute:#6b7776;--line:#e1ddd2;--in:#1f7a5a;--out:#b4442f;--acc:#16423c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,"Vazirmatn",sans-serif;font-size:16px;line-height:1.6;padding:12px;max-width:560px;margin-inline:auto}
+h1{font-size:20px;margin:6px 0 12px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+.sum small{color:var(--mute);display:block}
+.sum b{font-size:17px}
+.sum .profit{grid-column:1/3;background:var(--acc);color:#fff;border:0}
+.sum .profit small{color:#cfe3de}
+.sum .profit b{font-size:22px}
+form{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.types{display:flex;gap:6px;margin-bottom:10px}
+.types label{flex:1;text-align:center;border:1px solid var(--line);border-radius:8px;padding:8px 2px;cursor:pointer;font-size:14px}
+.types input{display:none}
+.types input:checked+span{font-weight:bold}
+.types label:has(input:checked){background:var(--acc);color:#fff;border-color:var(--acc)}
+input[type=text],input[type=date]{width:100%;padding:11px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+button{font:inherit;border:0;border-radius:8px;padding:11px 14px;cursor:pointer}
+.save{width:100%;background:var(--in);color:#fff;font-weight:bold}
+.filters{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}
+.filters button{background:var(--card);border:1px solid var(--line);padding:6px 12px;white-space:nowrap;font-size:14px}
+.filters button.on{background:var(--ink);color:#fff}
+.row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:6px}
+.row .t{flex:1;min-width:0}
+.row .t div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row small{color:var(--mute)}
+.amt{font-weight:bold;white-space:nowrap}
+.sale .amt{color:var(--in)}.buy .amt,.exp .amt{color:var(--out)}
+.del{background:none;color:var(--mute);padding:6px 10px;font-size:18px}
+.empty{text-align:center;color:var(--mute);padding:24px 0}
+.tools{display:flex;gap:8px;margin:14px 0 30px}
+.tools button,.tools label{flex:1;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>حسابداری مغازه</h1>
+
+<div class="sum">
+  <div><small>فروش</small><b id="sSale">۰</b></div>
+  <div><small>خرید و هزینه</small><b id="sOut">۰</b></div>
+  <div class="profit"><small>سود</small><b id="sProfit">۰</b></div>
+</div>
+
+<form id="f">
+  <div class="types">
+    <label><input type="radio" name="type" value="sale" checked><span>فروش</span></label>
+    <label><input type="radio" name="type" value="buy"><span>خرید کالا</span></label>
+    <label><input type="radio" name="type" value="exp"><span>هزینه</span></label>
+  </div>
+  <input type="text" id="title" placeholder="شرح (مثلاً: فروش روزانه، کرایه مغازه)" required>
+  <input type="text" id="amount" inputmode="numeric" placeholder="مبلغ (تومان)" required>
+  <input type="date" id="date">
+  <button class="save" type="submit">ثبت</button>
+</form>
+
+<div class="filters" id="filters"></div>
+<div id="list"></div>
+
+<div class="tools">
+  <button id="exp">ذخیره پشتیبان</button>
+  <button id="imp">بازیابی پشتیبان</button>
+</div>
+
+<script>
+const KEY="mobin_accounts_v1";
+const NAMES={sale:"فروش",buy:"خرید کالا",exp:"هزینه"};
+const fa=n=>Number(n).toLocaleString("fa-IR");
+const $=id=>document.getElementById(id);
+let data=[],filter="all";
+try{data=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){data=[]}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("ذخیره نشد")}};
+const today=()=>new Date().toISOString().slice(0,10);
+$("date").value=today();
+
+function toNum(s){
+  const map="۰۱۲۳۴۵۶۷۸۹",ar="٠١٢٣٤٥٦٧٨٩";
+  return Number(String(s).replace(/[۰-۹]/g,d=>map.indexOf(d)).replace(/[٠-٩]/g,d=>ar.indexOf(d)).replace(/[,،٬\s]/g,""));
+}
+
+$("f").onsubmit=e=>{
+  e.preventDefault();
+  const amount=toNum($("amount").value);
+  if(!amount||amount<=0){alert("مبلغ را درست وارد کنید");return}
+  data.unshift({id:Date.now(),type:document.querySelector("input[name=type]:checked").value,
+    title:$("title").value.trim(),amount,date:$("date").value||today()});
+  save();$("title").value="";$("amount").value="";render();
+};
+
+function render(){
+  const sale=data.filter(x=>x.type=="sale").reduce((a,x)=>a+x.amount,0);
+  const out=data.filter(x=>x.type!="sale").reduce((a,x)=>a+x.amount,0);
+  $("sSale").textContent=fa(sale);$("sOut").textContent=fa(out);
+  const p=sale-out;$("sProfit").textContent=(p<0?"−":"")+fa(Math.abs(p))+" تومان";
+  $("filters").innerHTML=[["all","همه"],["sale","فروش"],["buy","خرید"],["exp","هزینه"]]
+    .map(([k,v])=>`<button class="${filter==k?"on":""}" data-k="${k}">${v}</button>`).join("");
+  document.querySelectorAll("#filters button").forEach(b=>b.onclick=()=>{filter=b.dataset.k;render()});
+  const items=data.filter(x=>filter=="all"||x.type==filter);
+  $("list").innerHTML=items.length?items.map(x=>`
+    <div class="row ${x.type}">
+      <div class="t"><div>${esc(x.title)}</div><small>${NAMES[x.type]} — ${new Date(x.date).toLocaleDateString("fa-IR")}</small></div>
+      <div class="amt">${x.type=="sale"?"+":"−"}${fa(x.amount)}</div>
+      <button class="del" data-id="${x.id}" aria-label="حذف">✕</button>
+    </div>`).join(""):'<div class="empty">هنوز چیزی ثبت نشده. از فرم بالا شروع کنید.</div>';
+  document.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
+    if(confirm("این مورد حذف شود؟")){data=data.filter(x=>x.id!=b.dataset.id);save();render()}});
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+$("exp").onclick=()=>{
+  const txt=JSON.stringify(data);
+  if(window.Android){Android.share(txt)}
+  else{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download="hesab-backup-"+today()+".json";a.click()}
+};
+$("imp").onclick=()=>{
+  const s=prompt("متن پشتیبان را اینجا بچسبانید");
+  if(!s)return;
+  try{const d=JSON.parse(s);if(!Array.isArray(d))throw 0;data=d;save();render();alert("بازیابی شد")}catch(x){alert("متن معتبر نیست")}
+};
+render();
+</script>
+</body>
+</html>
