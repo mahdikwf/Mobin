@@ -1,130 +1,142 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="utf-8">
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>حسابداری مغازه</title>
 <style>
 :root{--bg:#f6f4ef;--card:#fff;--ink:#1d2a2a;--mute:#6b7776;--line:#e1ddd2;--in:#1f7a5a;--out:#b4442f;--acc:#16423c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,"Vazirmatn",sans-serif;font-size:16px;line-height:1.6;padding:12px;max-width:560px;margin-inline:auto}
-h1{font-size:20px;margin:6px 0 12px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,sans-serif;font-size:16px;line-height:1.6;padding:12px 12px 80px;max-width:560px;margin-inline:auto}
+h1{font-size:20px;margin:6px 0 12px}h2{font-size:16px;margin:14px 0 6px}
 .sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.sum div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
-.sum small{color:var(--mute);display:block}
-.sum b{font-size:17px}
-.sum .profit{grid-column:1/3;background:var(--acc);color:#fff;border:0}
-.sum .profit small{color:#cfe3de}
-.sum .profit b{font-size:22px}
+.sum div,.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+.sum small,small{color:var(--mute)}.sum small{display:block}
+.sum .p{grid-column:1/3;background:var(--acc);color:#fff;border:0}.sum .p small{color:#cfe3de}.sum .p b{font-size:22px}
 form{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
 .types{display:flex;gap:6px;margin-bottom:10px}
-.types label{flex:1;text-align:center;border:1px solid var(--line);border-radius:8px;padding:8px 2px;cursor:pointer;font-size:14px}
-.types input{display:none}
-.types input:checked+span{font-weight:bold}
-.types label:has(input:checked){background:var(--acc);color:#fff;border-color:var(--acc)}
-input[type=text],input[type=date]{width:100%;padding:11px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
-button{font:inherit;border:0;border-radius:8px;padding:11px 14px;cursor:pointer}
-.save{width:100%;background:var(--in);color:#fff;font-weight:bold}
-.filters{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}
-.filters button{background:var(--card);border:1px solid var(--line);padding:6px 12px;white-space:nowrap;font-size:14px}
-.filters button.on{background:var(--ink);color:#fff}
+.types label{flex:1;text-align:center;border:1px solid var(--line);border-radius:8px;padding:8px 2px;font-size:14px}
+.types input{display:none}.types label:has(input:checked){background:var(--acc);color:#fff;border-color:var(--acc)}
+input,select{width:100%;padding:11px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+button{font:inherit;border:0;border-radius:8px;padding:10px 12px;cursor:pointer;background:var(--card);border:1px solid var(--line)}
+.pri{background:var(--in);color:#fff;border:0;font-weight:bold}.full{width:100%}
+.btns{display:flex;gap:6px;margin:8px 0}.btns button{flex:1}
+.chips{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}.chips button{padding:6px 12px;font-size:14px;white-space:nowrap}.chips .on{background:var(--ink);color:#fff}
 .row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:6px}
-.row .t{flex:1;min-width:0}
-.row .t div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.row small{color:var(--mute)}
-.amt{font-weight:bold;white-space:nowrap}
-.sale .amt{color:var(--in)}.buy .amt,.exp .amt{color:var(--out)}
-.del{background:none;color:var(--mute);padding:6px 10px;font-size:18px}
+.row .t{flex:1;min-width:0}.row .t div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.amt{font-weight:bold;white-space:nowrap}.g{color:var(--in)}.r{color:var(--out)}
+.del{background:none;border:0;color:var(--mute);padding:6px 10px;font-size:18px}
 .empty{text-align:center;color:var(--mute);padding:24px 0}
-.tools{display:flex;gap:8px;margin:14px 0 30px}
-.tools button,.tools label{flex:1;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px;cursor:pointer}
-</style>
-</head>
-<body>
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);max-width:560px;margin:auto}
+nav button{flex:1;border:0;border-radius:0;font-size:13px;padding:12px 2px;background:none}nav .on{color:var(--acc);font-weight:bold;box-shadow:inset 0 3px var(--acc)}
+#lock{position:fixed;inset:0;background:var(--acc);display:none;flex-direction:column;justify-content:center;padding:30px;z-index:9;color:#fff;gap:10px;text-align:center}
+#lock input{text-align:center;font-size:22px}
+</style></head><body>
+<div id="lock"><h1>رمز را وارد کنید</h1><input id="pin" type="password" inputmode="numeric"><button class="pri" id="unlock">ورود</button></div>
 <h1>حسابداری مغازه</h1>
-
-<div class="sum">
-  <div><small>فروش</small><b id="sSale">۰</b></div>
-  <div><small>خرید و هزینه</small><b id="sOut">۰</b></div>
-  <div class="profit"><small>سود</small><b id="sProfit">۰</b></div>
-</div>
-
-<form id="f">
-  <div class="types">
-    <label><input type="radio" name="type" value="sale" checked><span>فروش</span></label>
-    <label><input type="radio" name="type" value="buy"><span>خرید کالا</span></label>
-    <label><input type="radio" name="type" value="exp"><span>هزینه</span></label>
-  </div>
-  <input type="text" id="title" placeholder="شرح (مثلاً: فروش روزانه، کرایه مغازه)" required>
-  <input type="text" id="amount" inputmode="numeric" placeholder="مبلغ (تومان)" required>
-  <input type="date" id="date">
-  <button class="save" type="submit">ثبت</button>
-</form>
-
-<div class="filters" id="filters"></div>
-<div id="list"></div>
-
-<div class="tools">
-  <button id="exp">ذخیره پشتیبان</button>
-  <button id="imp">بازیابی پشتیبان</button>
-</div>
-
+<div id="v"></div>
+<nav id="nav"></nav>
 <script>
-const KEY="mobin_accounts_v1";
-const NAMES={sale:"فروش",buy:"خرید کالا",exp:"هزینه"};
-const fa=n=>Number(n).toLocaleString("fa-IR");
-const $=id=>document.getElementById(id);
-let data=[],filter="all";
-try{data=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){data=[]}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("ذخیره نشد")}};
+const KEY="mobin_accounts_v1",NAMES={sale:"فروش",buy:"خرید کالا",exp:"هزینه"};
+const PM=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+let S={tx:[],cus:[],led:[],prod:[],pin:""},tab="reg",flt="all",cur=null,mon=null;
+try{const d=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(d))S.tx=d;else if(d)S=Object.assign(S,d)}catch(e){}
+const $=id=>document.getElementById(id),fa=n=>Number(n).toLocaleString("fa-IR"),uid=()=>Date.now()+Math.floor(Math.random()*999);
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert("ذخیره نشد")}};
 const today=()=>new Date().toISOString().slice(0,10);
-$("date").value=today();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+const money=n=>(n<0?"−":"")+fa(Math.abs(n));
+function toNum(s){const m="۰۱۲۳۴۵۶۷۸۹",a="٠١٢٣٤٥٦٧٨٩";return Number(String(s).replace(/[۰-۹]/g,d=>m.indexOf(d)).replace(/[٠-٩]/g,d=>a.indexOf(d)).replace(/[,،٬\s]/g,""))}
+function askN(msg){const v=prompt(msg);if(v===null)return null;const n=toNum(v);if(!(n>0)){alert("عدد درست وارد کنید");return null}return n}
+function jp(iso){const p=new Intl.DateTimeFormat("en-u-ca-persian",{year:"numeric",month:"numeric",day:"numeric"}).formatToParts(new Date(iso+"T12:00:00"));const g=t=>+p.find(x=>x.type==t||(t=="year"&&x.type=="relatedYear")).value;return{y:g("year"),m:g("month"),d:g("day")}}
+const mk=iso=>{const j=jp(iso);return j.y+"-"+j.m};
+const mname=k=>{const[y,m]=k.split("-");return PM[m-1]+" "+fa(y).replace(/٬/g,"")};
+const dstr=iso=>new Date(iso+"T12:00:00").toLocaleDateString("fa-IR");
+const tot=a=>{const s=sum(a.filter(x=>x.type=="sale"),x=>x.amount),o=sum(a.filter(x=>x.type!="sale"),x=>x.amount);return{s,o,p:s-o}};
+const box=t=>`<div class="sum"><div><small>فروش</small><b>${fa(t.s)}</b></div><div><small>خرید و هزینه</small><b>${fa(t.o)}</b></div><div class="p"><small>سود</small><b>${money(t.p)} تومان</b></div></div>`;
 
-function toNum(s){
-  const map="۰۱۲۳۴۵۶۷۸۹",ar="٠١٢٣٤٥٦٧٨٩";
-  return Number(String(s).replace(/[۰-۹]/g,d=>map.indexOf(d)).replace(/[٠-٩]/g,d=>ar.indexOf(d)).replace(/[,،٬\s]/g,""));
-}
-
-$("f").onsubmit=e=>{
-  e.preventDefault();
-  const amount=toNum($("amount").value);
-  if(!amount||amount<=0){alert("مبلغ را درست وارد کنید");return}
-  data.unshift({id:Date.now(),type:document.querySelector("input[name=type]:checked").value,
-    title:$("title").value.trim(),amount,date:$("date").value||today()});
-  save();$("title").value="";$("amount").value="";render();
-};
-
+const TABS=[["reg","ثبت"],["cus","مشتری"],["inv","انبار"],["rep","گزارش"],["set","تنظیمات"]];
+function go(t){tab=t;cur=null;render()}
 function render(){
-  const sale=data.filter(x=>x.type=="sale").reduce((a,x)=>a+x.amount,0);
-  const out=data.filter(x=>x.type!="sale").reduce((a,x)=>a+x.amount,0);
-  $("sSale").textContent=fa(sale);$("sOut").textContent=fa(out);
-  const p=sale-out;$("sProfit").textContent=(p<0?"−":"")+fa(Math.abs(p))+" تومان";
-  $("filters").innerHTML=[["all","همه"],["sale","فروش"],["buy","خرید"],["exp","هزینه"]]
-    .map(([k,v])=>`<button class="${filter==k?"on":""}" data-k="${k}">${v}</button>`).join("");
-  document.querySelectorAll("#filters button").forEach(b=>b.onclick=()=>{filter=b.dataset.k;render()});
-  const items=data.filter(x=>filter=="all"||x.type==filter);
-  $("list").innerHTML=items.length?items.map(x=>`
-    <div class="row ${x.type}">
-      <div class="t"><div>${esc(x.title)}</div><small>${NAMES[x.type]} — ${new Date(x.date).toLocaleDateString("fa-IR")}</small></div>
-      <div class="amt">${x.type=="sale"?"+":"−"}${fa(x.amount)}</div>
-      <button class="del" data-id="${x.id}" aria-label="حذف">✕</button>
-    </div>`).join(""):'<div class="empty">هنوز چیزی ثبت نشده. از فرم بالا شروع کنید.</div>';
-  document.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
-    if(confirm("این مورد حذف شود؟")){data=data.filter(x=>x.id!=b.dataset.id);save();render()}});
+  $("nav").innerHTML=TABS.map(([k,v])=>`<button class="${tab==k?"on":""}" onclick="go('${k}')">${v}</button>`).join("");
+  $("v").innerHTML=({reg:vReg,cus:vCus,inv:vInv,rep:vRep,set:vSet})[tab]();
+  if(tab=="reg")$("date").value=today();
 }
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-$("exp").onclick=()=>{
-  const txt=JSON.stringify(data);
-  if(window.Android){Android.share(txt)}
-  else{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download="hesab-backup-"+today()+".json";a.click()}
-};
-$("imp").onclick=()=>{
-  const s=prompt("متن پشتیبان را اینجا بچسبانید");
-  if(!s)return;
-  try{const d=JSON.parse(s);if(!Array.isArray(d))throw 0;data=d;save();render();alert("بازیابی شد")}catch(x){alert("متن معتبر نیست")}
-};
-render();
-</script>
-</body>
-</html>
+/* ثبت */
+function vReg(){
+  const items=S.tx.filter(x=>flt=="all"||x.type==flt);
+  return box(tot(S.tx))+`<form onsubmit="addTx(event)">
+  <div class="types">${["sale","buy","exp"].map((k,i)=>`<label><input type="radio" name="type" value="${k}" ${i?"":"checked"}>${NAMES[k]}</label>`).join("")}</div>
+  <input id="title" placeholder="شرح (مثلاً: فروش روزانه، کرایه مغازه)" required>
+  <input id="amount" inputmode="numeric" placeholder="مبلغ (تومان)" required>
+  <input type="date" id="date"><button class="pri full">ثبت</button></form>
+  <div class="chips">${[["all","همه"],["sale","فروش"],["buy","خرید"],["exp","هزینه"]].map(([k,v])=>`<button class="${flt==k?"on":""}" onclick="flt='${k}';render()">${v}</button>`).join("")}</div>`
+  +(items.length?items.map(x=>`<div class="row"><div class="t"><div>${esc(x.title)}</div><small>${NAMES[x.type]} — ${dstr(x.date)}</small></div><div class="amt ${x.type=="sale"?"g":"r"}">${x.type=="sale"?"+":"−"}${fa(x.amount)}</div><button class="del" onclick="delTx(${x.id})">✕</button></div>`).join(""):'<div class="empty">هنوز چیزی ثبت نشده.</div>');
+}
+function addTx(e){e.preventDefault();const a=toNum($("amount").value);if(!(a>0))return alert("مبلغ را درست وارد کنید");
+  S.tx.unshift({id:uid(),type:document.querySelector("input[name=type]:checked").value,title:$("title").value.trim(),amount:a,date:$("date").value||today()});save();render()}
+function delTx(id){if(confirm("حذف شود؟")){S.tx=S.tx.filter(x=>x.id!=id);save();render()}}
+
+/* مشتری و بدهی */
+const bal=id=>sum(S.led.filter(l=>l.cid==id),l=>l.kind=="debt"?l.amount:-l.amount);
+const balTxt=b=>b>0?`بدهکار: ${fa(b)}`:b<0?`طلبکار: ${fa(-b)}`:"تسویه";
+function vCus(){
+  if(cur){const c=S.cus.find(x=>x.id==cur),b=bal(cur),L=S.led.filter(l=>l.cid==cur);
+    return `<button onclick="cur=null;render()">← برگشت</button><h2>${esc(c.name)} ${c.phone?`<small>${esc(c.phone)}</small>`:""}</h2>
+    <div class="box"><small>وضعیت حساب</small><br><b class="${b>0?"r":"g"}">${balTxt(b)} تومان</b></div>
+    <div class="btns"><button onclick="led('debt')">ثبت بدهی (نسیه)</button><button class="pri" onclick="led('pay')">ثبت دریافتی</button></div>
+    ${L.length?L.map(l=>`<div class="row"><div class="t"><div>${l.kind=="debt"?"نسیه":"دریافت"}${l.note?" — "+esc(l.note):""}</div><small>${dstr(l.date)}</small></div><div class="amt ${l.kind=="debt"?"r":"g"}">${fa(l.amount)}</div><button class="del" onclick="delLed(${l.id})">✕</button></div>`).join(""):'<div class="empty">تراکنشی نیست.</div>'}
+    <button class="full" onclick="delCus(${cur})">حذف این مشتری</button>`}
+  const owed=sum(S.cus,c=>Math.max(bal(c.id),0));
+  return `<div class="box"><small>جمع طلب شما از مشتری‌ها</small><br><b>${fa(owed)} تومان</b></div>
+  <div class="btns"><button class="pri" onclick="addCus()">+ مشتری جدید</button></div>`
+  +(S.cus.length?S.cus.map(c=>{const b=bal(c.id);return `<div class="row" onclick="cur=${c.id};render()"><div class="t"><div>${esc(c.name)}</div></div><div class="amt ${b>0?"r":"g"}">${balTxt(b)}</div></div>`}).join(""):'<div class="empty">مشتری‌ای ثبت نشده.</div>');
+}
+function addCus(){const n=prompt("نام مشتری");if(!n||!n.trim())return;const p=prompt("شماره تلفن (اختیاری)")||"";S.cus.push({id:uid(),name:n.trim(),phone:p.trim()});save();render()}
+function led(kind){const a=askN(kind=="debt"?"مبلغ بدهی (تومان)":"مبلغ دریافتی (تومان)");if(!a)return;const note=prompt("توضیح (اختیاری)")||"";
+  S.led.unshift({id:uid(),cid:cur,kind,amount:a,note:note.trim(),date:today()});save();render()}
+function delLed(id){if(confirm("حذف شود؟")){S.led=S.led.filter(l=>l.id!=id);save();render()}}
+function delCus(id){if(confirm("مشتری و همه‌ی حسابش حذف شود؟")){S.cus=S.cus.filter(c=>c.id!=id);S.led=S.led.filter(l=>l.cid!=id);cur=null;save();render()}}
+
+/* انبار */
+function vInv(){
+  return `<div class="box"><small>ارزش کالاهای انبار (به قیمت خرید)</small><br><b>${fa(sum(S.prod,p=>Math.max(p.qty,0)*p.buy))} تومان</b></div>
+  <div class="btns"><button class="pri" onclick="addProd()">+ کالای جدید</button></div>`
+  +(S.prod.length?S.prod.map(p=>`<div class="box" style="margin-bottom:6px"><b>${esc(p.name)}</b> <span class="amt ${p.qty<=0?"r":""}">موجودی: ${fa(p.qty)}</span><br><small>خرید ${fa(p.buy)} — فروش ${fa(p.sell)}</small>
+  <div class="btns"><button class="pri" onclick="sell(${p.id})">فروش</button><button onclick="stockIn(${p.id})">ورود کالا</button><button onclick="delProd(${p.id})">حذف</button></div></div>`).join(""):'<div class="empty">کالایی ثبت نشده.</div>');
+}
+function addProd(){const n=prompt("نام کالا");if(!n||!n.trim())return;const q=toNum(prompt("تعداد موجودی فعلی")||"0")||0,b=toNum(prompt("قیمت خرید هر عدد (تومان)")||"0")||0,s=toNum(prompt("قیمت فروش هر عدد (تومان)")||"0")||0;
+  S.prod.push({id:uid(),name:n.trim(),qty:q,buy:b,sell:s});save();render()}
+function sell(id){const p=S.prod.find(x=>x.id==id),q=askN("تعداد فروش");if(!q)return;if(q>p.qty&&!confirm("موجودی کافی نیست. ادامه می‌دهید؟"))return;
+  const pr=prompt("قیمت فروش هر عدد",p.sell);if(pr===null)return;const pe=toNum(pr)||p.sell;
+  p.qty-=q;S.tx.unshift({id:uid(),type:"sale",title:`فروش: ${p.name} × ${q}`,amount:pe*q,date:today()});save();render()}
+function stockIn(id){const p=S.prod.find(x=>x.id==id),q=askN("تعداد کالای واردشده");if(!q)return;
+  const pr=prompt("قیمت خرید هر عدد",p.buy);if(pr===null)return;const pe=toNum(pr)||p.buy;
+  p.qty+=q;p.buy=pe;S.tx.unshift({id:uid(),type:"buy",title:`خرید: ${p.name} × ${q}`,amount:pe*q,date:today()});save();render()}
+function delProd(id){if(confirm("کالا حذف شود؟ (تراکنش‌ها می‌مانند)")){S.prod=S.prod.filter(p=>p.id!=id);save();render()}}
+
+/* گزارش */
+function vRep(){
+  const keys=[...new Set([mk(today()),...S.tx.map(x=>mk(x.date))])].sort().reverse();if(!mon||!keys.includes(mon))mon=keys[0];
+  const M=S.tx.filter(x=>mk(x.date)==mon),days={};M.forEach(x=>(days[x.date]=days[x.date]||[]).push(x));
+  return `<h2>امروز</h2>${box(tot(S.tx.filter(x=>x.date==today())))}
+  <h2>ماه</h2><select onchange="mon=this.value;render()">${keys.map(k=>`<option value="${k}" ${k==mon?"selected":""}>${mname(k)}</option>`).join("")}</select>${box(tot(M))}
+  <h2>روزانه</h2>`+(Object.keys(days).sort().reverse().map(d=>{const t=tot(days[d]);return `<div class="row"><div class="t"><div>${dstr(d)}</div><small>فروش ${fa(t.s)} — خرج ${fa(t.o)}</small></div><div class="amt ${t.p<0?"r":"g"}">${money(t.p)}</div></div>`}).join("")||'<div class="empty">در این ماه چیزی ثبت نشده.</div>');
+}
+
+/* تنظیمات */
+function vSet(){return `<h2>قفل برنامه</h2><div class="box"><small>${S.pin?"قفل فعال است":"قفل غیرفعال است"}</small><div class="btns"><button class="pri" onclick="setPin()">${S.pin?"تغییر رمز":"تعیین رمز"}</button>${S.pin?'<button onclick="rmPin()">حذف قفل</button>':""}</div>
+  <small>اگر رمز را فراموش کنید راه بازیابی نیست؛ پشتیبان بگیرید.</small></div>
+  <h2>پشتیبان</h2><div class="btns"><button onclick="bkp()">ذخیره پشتیبان</button><button onclick="rst()">بازیابی پشتیبان</button></div>`}
+const hh=s=>{let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))|0;return String(h)};
+function setPin(){const p=prompt("رمز جدید (حداقل ۴ رقم)");if(p===null)return;const n=String(toNum(p));if(!/^\d{4,}$/.test(n))return alert("رمز باید حداقل ۴ رقم باشد");S.pin=hh(n);save();render();alert("قفل فعال شد")}
+function rmPin(){if(confirm("قفل حذف شود؟")){S.pin="";save();render()}}
+function bkp(){const t=JSON.stringify(S);if(window.Android)Android.share(t);else{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"application/json"}));a.download="hesab-backup-"+today()+".json";a.click()}}
+function rst(){const s=prompt("متن پشتیبان را اینجا بچسبانید");if(!s)return;try{const d=JSON.parse(s);S=Array.isArray(d)?Object.assign({tx:[],cus:[],led:[],prod:[],pin:""},{tx:d}):Object.assign({tx:[],cus:[],led:[],prod:[],pin:""},d);save();render();alert("بازیابی شد")}catch(x){alert("متن معتبر نیست")}}
+
+/* قفل */
+function lockIt(){if(S.pin){$("pin").value="";$("lock").style.display="flex"}}
+$("unlock").onclick=()=>{if(hh(String(toNum($("pin").value)))==S.pin)$("lock").style.display="none";else{alert("رمز اشتباه است");$("pin").value=""}};
+document.addEventListener("visibilitychange",()=>{if(document.hidden)lockIt()});
+lockIt();render();
+</script></body></html>
